@@ -1,0 +1,184 @@
+#include <iostream>
+#include "Map.h"
+
+	Map::Map()
+		:m_head(NULL), m_tail(NULL), m_size(0) 
+	{}
+
+	Map::~Map() {
+		while(!empty()) {
+			Node* curr = m_head;
+			m_head = m_head->m_next;
+			curr->m_next = NULL;
+			delete curr;
+		}
+	}
+
+	bool Map::insert(const KeyType& key, const ValueType& value){
+		// If the Linked List is empty, add the Node to the beginning of the Linked List
+		if (m_head == NULL) {
+			Node* newNode = new Node;
+			newNode->m_key = key;
+			newNode->m_value = value;
+			newNode->m_next = NULL;
+			newNode->m_prev = NULL;
+			m_head = newNode;
+			std::cout << newNode->m_key << newNode->m_value;					
+			m_size = m_size++;
+			return true;
+		}
+		// If the Linked List is not empty, add the Node to the beginning of the Linked List
+		else if (!contains(key)) {
+			Node* newNode = new Node;
+			newNode->m_key = key;
+			newNode->m_value = value;
+			newNode->m_next = m_head;
+			m_head = newNode;
+			newNode->m_prev = NULL;
+			newNode->m_next->m_prev = newNode; 
+			m_size = m_size++;
+			return true;
+		}
+		return false;
+	}
+
+	bool Map::update(const KeyType& key, const ValueType& value){
+		if (contains(key)) {
+			Node* p;
+			for (p = m_head; p != NULL && p->m_key != key; p = p->m_next) {
+				;
+			}
+			if (p != NULL) {
+				std::cout << "Update: P's key is: " << p->m_key << "\n";
+				p->m_value = value;
+				std::cout << "Update: P's value is now: " << p->m_value << "\n";
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Map::insertOrUpdate(const KeyType& key, const ValueType& value){
+		if(empty()) {
+			Node* newNode = new Node;
+			newNode->m_key = key;
+			newNode->m_value = value;
+			newNode->m_next = NULL;
+			newNode->m_prev = NULL;
+			m_head = newNode;
+			std::cout << newNode->m_key << newNode->m_value;					
+			m_size = m_size++;
+			return true;
+		}
+
+		if (contains(key)) {
+			Node* p;
+			for (p = m_head; p != NULL && p->m_key != key; p = p->m_next) {
+				;
+			}
+			if (p != NULL) {
+				std::cout << "Update: P's key is: " << p->m_key << "\n";
+				p->m_value = value;
+				std::cout << "Update: P's value is now: " << p->m_value << "\n";
+				return true;
+			}
+		}
+		
+		if (!contains(key)) {
+			Node* newNode = new Node;
+			newNode->m_key = key;
+			newNode->m_value = value;
+			newNode->m_next = m_head;
+			m_head = newNode;
+			newNode->m_prev = NULL;
+			newNode->m_next->m_prev = newNode; 
+			m_size = m_size++;
+			return true;
+		}
+		return false;
+	}
+
+	bool Map::erase(const KeyType& key){
+		// If the Linked List is empty
+		if (empty()) {
+			return false;
+		}
+
+		Node* p;
+		for (p = m_head; p != NULL && p->m_key != key; p = p->m_next) {
+			;
+		}
+		// If there is only one element in the Linked List
+		if (p->m_prev == NULL && p->m_next == NULL) {
+			m_head = NULL;
+			m_tail = NULL;
+																					
+			m_size = m_size--;
+			return true;
+		}
+		// If the Node we want to delete is the first element
+		if (p->m_prev == NULL) {
+			m_head = p->m_next;
+			p->m_next->m_prev = NULL;
+																					
+			m_size = m_size--;
+			return true;
+		}
+		// If the Node we want to delete is the last element
+		if (p->m_next == NULL) {
+			m_tail = p->m_prev;
+			p->m_prev->m_next = NULL;
+																					
+			m_size = m_size--;
+			return true;
+		}
+		return false;
+	}
+
+	bool Map::contains(const KeyType& key) const
+	{
+		Node* p;	
+		for(p = m_head; p != NULL && p->m_key != key; p = p->m_next) {
+			;
+		}
+		if (p != NULL) {
+			std::cout << "Contains: " << p->m_key << "\n";						
+			return true;
+		}
+		return false;
+	}
+
+	void Map::swap(Map& other){
+		Node* temp_head;
+		Node* temp_tail;
+		int temp_size;
+		// Swapping the head pointers for both maps
+		temp_head = m_head;
+		m_head = other.m_head;
+		other.m_head = temp_head;
+		// Swapping the tail pointers for both maps
+		temp_tail = m_tail;
+		m_tail = other.m_tail;
+		other.m_tail = temp_tail;
+		// Swapping the size of the maps
+		temp_size = m_size;
+		m_size = other.m_size;
+		other.m_size = temp_size;
+	}
+																									
+	void Map::print() {
+		Node* p;	
+		for(p = m_head; p != NULL; p = p->m_next) {
+			std::cout << "Print: P's m_key: " << p->m_key << " P's m_value " << p->m_value << "\n";
+		}
+	}
+
+	/*
+	Map::Map(const Map& other) {
+		Node* p;
+		for (p = m_head; p != NULL; p = p->m_next) {
+			Node* p = new Node;
+		}
+		m_size = other.m_size;
+	}
+
