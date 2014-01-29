@@ -13,6 +13,29 @@
 			delete curr;
 		}
 	}
+	
+	Map::Map(const Map& other) 
+		:m_size(other.m_size)
+	{
+		if (other.m_head == NULL)
+			m_head = NULL;
+		
+		else {
+			m_head = new Node;
+			m_head->m_key = other.m_head->m_key;
+			m_head->m_value = other.m_head->m_value;
+
+			Node* m = m_head;
+			Node* p;
+			for (p = other.m_head->m_next; p != NULL; p = p->m_next) {
+				m->m_next = new Node;
+				m = m->m_next;
+				m->m_key = p->m_key;
+				m->m_value = p->m_value;
+				}
+			m->m_next = NULL;
+		}
+	}
 
 	bool Map::insert(const KeyType& key, const ValueType& value){
 		// If the Linked List is empty, add the Node to the beginning of the Linked List
